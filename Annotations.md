@@ -155,5 +155,114 @@ Here JSON field **user_name** maps to Java field **name**.
 ```
 ```
 
+# Spring Core Short Notes
+
+## Bean
+A **Bean** is an object that is **created and managed by the Spring IoC container**.
+
+---
+
+## `@Component`
+- Class level annotation.
+- Used to **automatically create a bean** using component scanning.
+
+Example:
+```java
+@Component
+public class UserService {}
+````
+
+---
+
+## `@Bean`
+
+* Method level annotation.
+* Used to **manually create and register a bean** inside a `@Configuration` class.
+
+Example:
+
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public UserService userService(){
+        return new UserService();
+    }
+}
+```
+
+---
+
+## Difference: `@Component` vs `@Bean`
+
+| `@Component`            | `@Bean`                      |
+| ----------------------- | ---------------------------- |
+| Class level             | Method level                 |
+| Automatic bean creation | Manual bean creation         |
+| Used for own classes    | Used for third-party classes |
+
+---
+
+## Dependency Injection (DI)
+
+Spring **automatically provides required objects to a class instead of the class creating them**.
+
+Example:
+
+```java
+@Autowired
+Engine engine;
+```
+
+---
+
+## Types of Injection
+
+1. Constructor Injection (Best)
+2. Setter Injection
+3. Field Injection
+
+---
+
+## `@PostConstruct`
+
+Runs **after bean creation and dependency injection**.
+
+Example:
+
+```java
+@PostConstruct
+public void init(){}
+```
+
+---
+
+## Bean Lifecycle
+
+```
+Bean Creation
+↓
+Dependency Injection
+↓
+@PostConstruct (Initialization)
+↓
+Bean Ready
+↓
+@PreDestroy (Before destruction)
+```
+
+---
+
+## Bean Creation Time
+
+Default → **Eager initialization** (created at startup)
+
+Use `@Lazy` → **Created only when needed**
+
+```
+```
+
+
 
 

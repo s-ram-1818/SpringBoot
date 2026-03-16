@@ -152,5 +152,99 @@ Request → One bean per HTTP request
 Session → One bean per user session
 ```
 
+
+# Singleton Bean with Request Scope in Spring
+
+## Problem
+
+A **Singleton bean** is created **once per application**, while a **Request-scoped bean** is created **once per HTTP request**.
+
+If a singleton directly injects a request-scoped bean, the request bean is created **only once at startup**, which breaks request scope behavior.
+
+Example (Problem):
+
+```java
+@Component
+@Scope("singleton")
+public class OrderService {
+
+    @Autowired
+    private RequestBean requestBean; // wrong behavior
+}
+````
+
+```java
+@Component
+@Scope("request")
+public class RequestBean {}
+```
+
+Here:
+
+* `OrderService` is created **once**
+* `RequestBean` is injected **once**
+* It will **not change per request**
+
+---
+
+# Solution: Use Scoped Proxy
+
+Spring creates a **proxy object** that fetches the correct request bean **for every HTTP request**.
+
+Example:
+
+```java
+@Component
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class RequestBean {
+
+}
+```
+
+Now inject normally:
+
+```java
+@Component
+public class OrderService {
+
+    @Autowired
+    private RequestBean requestBean;
+
+}
+```
+
+---
+
+# How It Works
+
+```
+Singleton Bean
+     ↓
+Proxy Object
+     ↓
+Actual Request Bean (created per request)
+```
+
+Each request gets its **own RequestBean instance**, while the singleton holds only the **proxy reference**.
+
+---
+
+# Summary
+
+| Bean Type | Instances            |
+| --------- | -------------------- |
+| Singleton | One per application  |
+| Request   | One per HTTP request |
+
+To use **request scope inside singleton**, use **Scoped Proxy**.
+
+---
+
+# One Line
+
+**Scoped Proxy allows a singleton bean to safely use a request-scoped bean by injecting a proxy instead of the real object.**
+
 ```
 ```
+
+

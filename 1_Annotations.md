@@ -1,4 +1,4 @@
-````md
+
 # @Controller vs @RestController
 
 **@Controller**

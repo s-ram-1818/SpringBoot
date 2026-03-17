@@ -264,5 +264,111 @@ Use `@Lazy` → **Created only when needed**
 ```
 
 
+# `@ConditionalOnProperty` in Spring Boot
+
+## Definition
+`@ConditionalOnProperty` is used to **create a bean only if a specific property is present (or has a specific value)** in `application.properties` or `application.yml`.
+
+---
+
+## Syntax
+
+```java
+@ConditionalOnProperty(
+    name = "property.name",
+    havingValue = "value",
+    matchIfMissing = false
+)
+````
+
+---
+
+## Example
+
+### Step 1: Define Property
+
+```properties
+feature.payment.enabled=true
+```
+
+---
+
+### Step 2: Use Annotation
+
+```java
+@Component
+@ConditionalOnProperty(name = "feature.payment.enabled", havingValue = "true")
+public class PaymentService {
+
+    public PaymentService() {
+        System.out.println("PaymentService Bean Created");
+    }
+
+}
+```
+
+### Behavior
+
+* If `feature.payment.enabled=true` → Bean is created ✅
+* If `false` or missing → Bean NOT created ❌
+
+---
+
+## Another Example (with `@Bean`)
+
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    @ConditionalOnProperty(name = "feature.email.enabled", havingValue = "true")
+    public EmailService emailService(){
+        return new EmailService();
+    }
+}
+```
+
+---
+
+## Important Attributes
+
+| Attribute      | Meaning                                        |
+| -------------- | ---------------------------------------------- |
+| name           | Property name to check                         |
+| havingValue    | Required value to match                        |
+| matchIfMissing | If true, bean created when property is missing |
+
+---
+
+## Example with `matchIfMissing`
+
+```java
+@ConditionalOnProperty(
+    name = "feature.sms.enabled",
+    havingValue = "true",
+    matchIfMissing = true
+)
+```
+
+* If property missing → Bean created ✅
+* If false → Not created ❌
+
+---
+
+## Use Cases
+
+* Enable/disable features (**feature toggles**)
+* Environment-based configuration
+* Optional services (email, payment, logging)
+
+---
+
+## Short Note
+
+**`@ConditionalOnProperty` → Creates a bean only when a specific property value matches the condition.**
+
+```
+```
+
 
 

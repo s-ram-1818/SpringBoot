@@ -369,6 +369,190 @@ public class AppConfig {
 
 ```
 ```
+[
+# `@Profile` Annotation in Spring Boot
+
+---
+
+## 1. Definition
+
+`@Profile` is used to **load or activate beans only for specific environments (profiles)**.
+
+👉 Common profiles:
+- `dev`
+- `test`
+- `prod`
+
+---
+
+## 2. Why Use It?
+
+- Different configurations for different environments  
+- Enable/disable beans based on environment  
+- Avoid manual code changes  
+
+---
+
+## 3. Basic Syntax
+
+```java
+@Profile("dev")
+@Component
+public class DevService {}
+````
+
+This bean will be created **only when `dev` profile is active**.
+
+---
+
+## 4. Activate Profile
+
+### Using `application.properties`
+
+```properties
+spring.profiles.active=dev
+```
+
+---
+
+### Using Command Line
+
+```bash
+--spring.profiles.active=prod
+```
+
+---
+
+## 5. Example
+
+### Dev Bean
+
+```java id="x7p4mv"
+@Component
+@Profile("dev")
+class DevDatabase {
+
+    public DevDatabase(){
+        System.out.println("Dev DB Connected");
+    }
+}
+```
+
+---
+
+### Prod Bean
+
+```java id="6l4v9n"
+@Component
+@Profile("prod")
+class ProdDatabase {
+
+    public ProdDatabase(){
+        System.out.println("Prod DB Connected");
+    }
+}
+```
+
+---
+
+### Behavior
+
+| Active Profile | Bean Created |
+| -------------- | ------------ |
+| dev            | DevDatabase  |
+| prod           | ProdDatabase |
+
+---
+
+## 6. Multiple Profiles
+
+```java id="j7sq0z"
+@Profile({"dev", "test"})
+@Component
+class TestService {}
+```
+
+Bean is created if **any profile matches**.
+
+---
+
+## 7. Negation (NOT Profile)
+
+```java id="8gdf1k"
+@Profile("!prod")
+@Component
+class NonProdService {}
+```
+
+Bean is created in **all profiles except prod**.
+
+---
+
+## 8. With `@Bean`
+
+```java id="c0l4h9"
+@Configuration
+public class AppConfig {
+
+    @Bean
+    @Profile("dev")
+    public DataSource devDataSource(){
+        return new DevDataSource();
+    }
+}
+```
+
+---
+
+## 9. Internal Working
+
+```text id="tx9l2a"
+Spring Boot Starts
+↓
+Reads active profile
+↓
+Checks @Profile condition
+↓
+Match?
+   → YES → Bean Created
+   → NO  → Bean Skipped
+```
+
+---
+
+## 10. Difference: `@Profile` vs `@ConditionalOnProperty`
+
+| Feature  | `@Profile`                  | `@ConditionalOnProperty` |
+| -------- | --------------------------- | ------------------------ |
+| Based on | Environment (dev/test/prod) | Property value           |
+| Use case | Environment-specific config | Feature toggle           |
+
+---
+
+## 11. Best Practices
+
+* Use for **environment-based configs**
+* Combine with config classes
+* Keep profiles clean (`dev`, `prod`, etc.)
+* Avoid too many profiles
+
+---
+
+## 12. Short Summary
+
+* Loads beans **based on active environment**
+* Helps manage **multiple environments**
+* Works with `@Component` and `@Bean`
+
+---
+
+## One Line Definition
+
+**`@Profile` → Creates a bean only when a specific environment profile is active.**
+
+```
+```
+
 
 
 
